@@ -3,22 +3,30 @@ import facciones.*
 
 class Asentamiento {
     const tamaño
-    const habitantes = #{}
+    var ejercito
     method tamaño() = tamaño
-    method agregarHabitante(unHabitante) {habitantes.add(unHabitante)}
-    method quitarHabitante(unHabitante) {habitantes.remove(unHabitante)}
-    method potencialOfensivo() = habitantes.sum({i=>i.potencialOfensivo()})
-    method desalojar() {habitantes.clear()}
-    method alojar(unEjercito) {if(unEjercito.tamaño() > tamaño )
-    habitantes.addAll(unEjercito.losMasFuertes().take(tamaño.min(10)))}
+    method agregarMiembro(unMiembro){ejercito.add(unMiembro)}
+    method quitarMiembro(unMiembro){ejercito.remove(unMiembro)}
+    method potencialOfensivo() = ejercito.potencialOfensivo()
+    method serOcupada(unEjercito)
 }
 
 
 class Aldea inherits Asentamiento{
-    method cantidadMaximaHabitantes() = tamaño
-    override method agregarHabitante(unHabitante) {if (habitantes.size() < tamaño) super(unHabitante) }
+    const maxTropa
+    method initialize(){
+        if(maxTropa < 10) self.error("la poblacion es menor a 10")
+    }
+    override method agregarMiembro(unMiembro) {if (ejercito.size() < tamaño) super(unMiembro) }
+    override method serOcupada(unEjercito) {
+        if(maxTropa < unEjercito.tamaño()){
+        ejercito = new Ejercito(integrantes= unEjercito.losMasFuertes())
+        unEjercito.quitarLosMasFuertes()}
+        else {ejercito = unEjercito}
+    }
 }
 
 class Ciudad inherits Asentamiento{
-
+    override method potencialOfensivo() = super() + 300
+    override method serOcupada(unEjercito) {ejercito = unEjercito}
 }
